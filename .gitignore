@@ -4,6 +4,11 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Test / coverage artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
 # FastF1 downloads a large local cache — never commit it. It rebuilds itself.
 data/cache/
 
