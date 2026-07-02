@@ -1,0 +1,12 @@
+# Run the whole app with:  docker compose up --build
+# Then open http://localhost:8000
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Optional: enables the "Use live conditions" button. Set it in your shell
+      # or a .env file next to this compose file. Leave empty to run offline.
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY:-}
+    restart: unless-stopped

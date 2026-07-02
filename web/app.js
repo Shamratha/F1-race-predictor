@@ -26,7 +26,8 @@ async function init() {
   el("wind").oninput = () => { el("windVal").textContent = el("wind").value; refresh(); };
   el("penaltyDriver").onchange = refresh;
   el("penaltyGrid").oninput = () => { el("penaltyGridVal").textContent = el("penaltyGrid").value; refresh(); };
-  el("resetBtn").onclick = loadRace;
+  el("liveBtn").onclick = useLiveWeather;
+  el("resetBtn").onclick = () => { el("liveStatus").textContent = ""; loadRace(); };
 
   fillCircuits();
 }
@@ -93,6 +94,31 @@ async function callPredict(params) {
     return null;
   } finally {
     el("loader").classList.add("hidden");
+  }
+}
+
+// ---- live weather ----
+async function useLiveWeather() {
+  const circuit = el("circuit").value;
+  const status = el("liveStatus");
+  status.textContent = "fetching…";
+  try {
+    const w = await fetch(`/api/weather/live?circuit=${encodeURIComponent(circuit)}`).then((r) => r.json());
+    if (w.source !== "live") {
+      status.textContent = (w.reason || "").toLowerCase().includes("key")
+        ? "Set OPENWEATHER_API_KEY to enable live weather (see README)."
+        : `Live weather unavailable (${w.reason || "error"}).`;
+      return;
+    }
+    setRain(w.rainfall === 1);
+    el("trackTemp").value = w.track_temp;
+    el("trackTempVal").textContent = w.track_temp + "°C";
+    el("wind").value = w.wind_speed;
+    el("windVal").textContent = w.wind_speed;
+    status.textContent = `Live @ ${w.location}: ${w.air_temp}°C air · ${w.condition}`;
+    refresh();
+  } catch (e) {
+    status.textContent = "Live weather request failed.";
   }
 }
 

@@ -1,0 +1,17 @@
+# Keep the image small — exclude everything not needed at runtime.
+.venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.claude/
+tests/
+src/
+data/cache/
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore
+requirements-dev.txt
+pytest.ini
+.pytest_cache/

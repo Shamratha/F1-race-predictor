@@ -24,6 +24,8 @@ conditions and watch the prediction react:
 - **🏗️ Constructor standings** — predicted points per team for that race
 - **⚙️ What-if scenarios** — force a wet race, change track temperature/wind, or hand a
   driver a **grid penalty**, and see the podium re-shuffle live
+- **📡 Live weather** — pull *current* real-world conditions at the circuit
+  (OpenWeatherMap) with one click, then predict on them
 - **🔍 Explainability** — a SHAP plot shows exactly what the model learned
 
 ---
@@ -88,9 +90,12 @@ exactly what a race engineer would tell you, learned purely from data.
 
 - **Data:** FastF1 (real telemetry, results, qualifying, weather)
 - **ML:** scikit-learn pipeline + XGBoost, SHAP for explainability
-- **Backend:** FastAPI + Uvicorn
+- **Backend:** FastAPI + Uvicorn, organised into a **service layer**
+  (`f1_data_service`, `prediction_service`, `weather_service`)
 - **Frontend:** vanilla HTML/CSS/JS (no build step) — dark F1-themed dashboard
-- **Deploy:** Render (single web service)
+- **Live weather:** OpenWeatherMap (optional, opt-in via API key)
+- **Testing:** pytest + coverage (29 tests, ~96% coverage)
+- **Deploy:** Docker / Render (single web service)
 
 ---
 
@@ -108,6 +113,34 @@ uvicorn main:app --reload --port 8000
 
 Open **http://localhost:8000** — the dashboard and API are both served there.
 API docs (Swagger) are at **http://localhost:8000/docs**.
+
+### Enable live weather (optional)
+
+The **"Use live conditions"** button needs a free
+[OpenWeatherMap](https://openweathermap.org/api) API key. Without one, everything
+else still works and the button shows a friendly hint.
+
+```bash
+export OPENWEATHER_API_KEY=your_key        # Windows: set OPENWEATHER_API_KEY=your_key
+uvicorn main:app --reload --port 8000
+```
+
+### Run the tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest -v                                  # 29 tests
+pytest --cov=. --cov-report=term-missing   # with coverage (~96%)
+```
+
+Tests cover the feature-engineering functions (incl. a **no-leakage** check), the
+prediction service, the live-weather service (offline), and every API endpoint.
+
+### Run with Docker
+
+```bash
+docker compose up --build                  # then open http://localhost:8000
+```
 
 ### Rebuild the data & model from scratch (optional)
 
@@ -135,15 +168,24 @@ has to hit the F1 API or retrain.
 
 ```
 f1 race prediction/
-├── main.py                 # FastAPI backend + serves the dashboard
+├── main.py                 # FastAPI app — thin routing layer
+├── constants.py            # team colours, driver names, track coords, helpers
+├── services/
+│   ├── f1_data_service.py  # dataset access + race lookups
+│   ├── prediction_service.py  # model + prediction payload
+│   └── weather_service.py  # live OpenWeatherMap integration (opt-in)
 ├── web/                    # custom dashboard (index.html, styles.css, app.js)
 ├── src/
+│   ├── features.py         # pure feature-engineering (unit-tested)
 │   ├── build_dataset.py    # FastF1 → feature-engineered dataset
 │   └── train.py            # XGBoost training, evaluation, SHAP
+├── tests/                  # pytest suite (features, services, API)
 ├── models/                 # model.joblib, metadata.json, shap_summary.png
 ├── data/dataset.csv        # 1,799 driver-races (data/cache/ is git-ignored)
 ├── requirements.txt        # lean runtime deps (for deploy)
-├── requirements-dev.txt    # + fastf1, shap, matplotlib (for rebuilding)
+├── requirements-dev.txt    # + fastf1, shap, matplotlib, pytest (for dev)
+├── Dockerfile              # production image
+├── docker-compose.yml      # one-command local run
 └── render.yaml             # Render Blueprint
 ```
 
