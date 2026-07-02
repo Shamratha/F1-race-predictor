@@ -1,0 +1,7 @@
+# Full dependencies for the data + training pipeline
+# (src/build_dataset.py and src/train.py). Adds the heavy libraries the
+# deployed app deliberately avoids.
+-r requirements.txt
+fastf1==3.8.3
+shap==0.52.0
+matplotlib==3.11.0

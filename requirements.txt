@@ -1,0 +1,11 @@
+# Runtime dependencies for the deployed app (kept lean for a free-tier host).
+# The FastAPI app only loads the saved model + serves the static dashboard, so
+# it needs NEITHER shap/numba NOR fastf1 at runtime.
+# To rebuild the dataset or retrain the model, use requirements-dev.txt.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pandas==2.3.3
+numpy==2.4.6
+scikit-learn==1.9.0
+xgboost==3.3.0
+joblib==1.5.3

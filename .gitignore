@@ -1,0 +1,18 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# FastF1 downloads a large local cache — never commit it. It rebuilds itself.
+data/cache/
+
+# Local editor / preview config (machine-specific absolute paths)
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NOTE: data/dataset.csv and models/* ARE committed on purpose — the deployed
+# app loads them directly so it never has to hit the F1 API or retrain.
