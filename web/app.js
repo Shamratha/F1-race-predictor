@@ -126,7 +126,7 @@ async function useLiveWeather() {
 function setRain(wet) {
   const b = el("rainBtn");
   b.classList.toggle("wet", wet);
-  b.textContent = wet ? "Wet 🌧️" : "Dry ☀️";
+  b.textContent = wet ? "Wet" : "Dry";
 }
 function toggleRain() { setRain(!el("rainBtn").classList.contains("wet")); }
 
@@ -134,7 +134,7 @@ function toggleRain() { setRain(!el("rainBtn").classList.contains("wet")); }
 function renderMetrics(m, nRows, nSeasons) {
   const lift = (m.roc_auc - m.grid_baseline_auc).toFixed(3);
   el("metrics").innerHTML = `
-    <div class="badge"><div class="k">ROC-AUC</div><div class="v">${m.roc_auc.toFixed(3)}</div><div class="sub">▲ +${lift} vs grid</div></div>
+    <div class="badge"><div class="k">ROC-AUC</div><div class="v">${m.roc_auc.toFixed(3)}</div><div class="sub">+${lift} vs grid</div></div>
     <div class="badge"><div class="k">Precision@3</div><div class="v">${m.precision_at_3.toFixed(2)}</div><div class="sub">podium hit-rate</div></div>
     <div class="badge"><div class="k">Seasons</div><div class="v">${nSeasons}</div><div class="sub">${nRows} driver-races</div></div>`;
   el("honest").textContent =
@@ -153,42 +153,45 @@ function render(data) {
   renderConstructors(data.constructors);
 }
 
+function num(v, dp = 1) {
+  return v === null || v === undefined ? "—" : Number(v).toFixed(dp);
+}
+
 function renderWeather(w) {
   const wet = w.rainfall === 1;
   el("weatherStrip").innerHTML = `
-    <div class="w">🌡️ <b>${w.track_temp ?? "?"}°C</b> <small>track</small></div>
-    <div class="w">🌤️ <b>${w.air_temp ?? "?"}°C</b> <small>air</small></div>
-    <div class="w">💧 <b>${w.humidity ?? "?"}%</b> <small>humidity</small></div>
-    <div class="w">💨 <b>${w.wind_speed ?? "?"}</b> <small>wind</small></div>
-    <div class="w">${wet ? "🌧️ <b>Wet</b>" : "☀️ <b>Dry</b>"} <small>conditions</small></div>`;
+    <div class="w"><span class="wk">Track</span><b>${num(w.track_temp)}&deg;C</b></div>
+    <div class="w"><span class="wk">Air</span><b>${num(w.air_temp)}&deg;C</b></div>
+    <div class="w"><span class="wk">Humidity</span><b>${num(w.humidity, 0)}%</b></div>
+    <div class="w"><span class="wk">Wind</span><b>${num(w.wind_speed)}</b></div>
+    <div class="w"><span class="wk">Conditions</span><b>${wet ? "Wet" : "Dry"}</b></div>`;
 }
 
 function renderBanner(data) {
   const b = el("banner");
   if (data.race.changed) {
-    b.innerHTML = `<span class="box whatif">⚙️ What-if scenario — you changed the conditions, so there's no actual result to compare against.</span>`;
+    b.innerHTML = `<span class="box whatif">What-if scenario &mdash; conditions were changed, so there is no actual result to compare against.</span>`;
   } else if (data.actual_podium.length) {
-    b.innerHTML = `<span class="box hit">✅ Model got <b>${data.hits}/3</b> of the actual podium — real result: ${data.actual_podium.join(", ")}.</span>`;
+    b.innerHTML = `<span class="box hit">Model called <b>${data.hits} of 3</b> podium finishers correctly. Actual podium: ${data.actual_podium.join(", ")}.</span>`;
   } else {
     b.innerHTML = "";
   }
 }
 
 function renderPodium(data) {
-  const medals = ["🥇", "🥈", "🥉"];
   const showHit = !data.race.changed && data.actual_podium.length;
   el("podium").innerHTML = data.drivers.slice(0, 3).map((d, i) => {
     let mark = "";
     if (showHit) {
       mark = d.podium_hit
-        ? `<div class="mark ok">✅ finished on the podium</div>`
-        : `<div class="mark no">✕ did not podium</div>`;
+        ? `<div class="mark ok">Finished on the podium</div>`
+        : `<div class="mark no">Did not podium</div>`;
     }
     return `
       <div class="pcard rank${i + 1}" style="--tc:${d.team_color}">
-        <div class="pos">${medals[i]} P${i + 1}</div>
+        <div class="pos">P${i + 1}</div>
         <div class="dname">${d.name}</div>
-        <div class="team">${d.team} · started P${d.grid ?? "?"}</div>
+        <div class="team">${d.team} &middot; started P${d.grid ?? "?"}</div>
         <div class="prob">${pct(d.podium_proba)}<small>% podium chance</small></div>
         <div class="bar"><i style="width:${pct(d.podium_proba)}%"></i></div>
         ${mark}
@@ -201,11 +204,11 @@ function renderDrivers(data) {
   el("drivers").innerHTML = data.drivers.map((d) => {
     const fin = d.actual_finish
       ? `<b>P${d.actual_finish}</b><small>actual</small>`
-      : `<small>—</small>`;
+      : `<small>&mdash;</small>`;
     return `
       <div class="drow ${podSet.has(d.driver) ? "pod" : ""}" style="--tc:${d.team_color}">
         <div class="rk">${d.pred_rank}</div>
-        <div class="who"><b>${d.name}</b><small>${d.team} · grid P${d.grid ?? "?"}</small></div>
+        <div class="who"><b>${d.name}</b><small>${d.team} &middot; grid P${d.grid ?? "?"}</small></div>
         <div class="pbar"><i style="width:${pct(d.podium_proba)}%"></i><span>${pct(d.podium_proba)}%</span></div>
         <div class="fin">${fin}</div>
       </div>`;
