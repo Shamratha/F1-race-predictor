@@ -17,6 +17,13 @@ from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+# Load OPENWEATHER_API_KEY (and any other vars) from a local .env file if present.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from services.f1_data_service import F1DataService
 from services.prediction_service import PredictionService
 from services.weather_service import WeatherService

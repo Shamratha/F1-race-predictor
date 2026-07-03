@@ -12,6 +12,9 @@ htmlcov/
 # FastF1 downloads a large local cache — never commit it. It rebuilds itself.
 data/cache/
 
+# Secrets — never commit your real API key
+.env
+
 # Local editor / preview config (machine-specific absolute paths)
 .claude/
 

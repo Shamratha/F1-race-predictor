@@ -120,8 +120,22 @@ The **"Use live conditions"** button needs a free
 [OpenWeatherMap](https://openweathermap.org/api) API key. Without one, everything
 else still works and the button shows a friendly hint.
 
+1. Create a free account at [openweathermap.org](https://openweathermap.org/api)
+   and copy your key from the **API keys** tab. (A new key can take a little while
+   to activate.)
+2. Put it in a `.env` file next to `main.py` — it's loaded automatically and is
+   git-ignored:
+
+   ```bash
+   cp .env.example .env        # Windows: copy .env.example .env
+   # then edit .env:  OPENWEATHER_API_KEY=your_key_here
+   ```
+3. Restart the app and click **Use live conditions**.
+
+Prefer an environment variable instead of a file? That works too:
+
 ```bash
-export OPENWEATHER_API_KEY=your_key        # Windows: set OPENWEATHER_API_KEY=your_key
+export OPENWEATHER_API_KEY=your_key        # Windows PowerShell: $env:OPENWEATHER_API_KEY="your_key"
 uvicorn main:app --reload --port 8000
 ```
 
