@@ -1,4 +1,4 @@
-# 🏁 F1 Podium Predictor
+# F1 Podium Predictor
 
 **Machine-learning Formula 1 podium predictions** from the *changing factors* that
 decide a race — starting grid, qualifying pace, recent form, car reliability and
@@ -12,25 +12,25 @@ served through a **FastAPI** backend and a custom dark-themed dashboard.
 
 ---
 
-## 🎯 What it does
+## What it does
 
 For any Grand Prix from 2021–2024, the model gives **every driver a probability of
 finishing on the podium (top 3)** and ranks the field. Then you can play with the
 conditions and watch the prediction react:
 
-- **🏎️ Pick a race** — any round from four seasons of real data
-- **🏆 Predicted podium** — top-3 drivers with podium probability, checked against the *actual* result
-- **📊 Full-grid probabilities** — all 20 drivers ranked, with podium-chance bars
-- **🏗️ Constructor standings** — predicted points per team for that race
-- **⚙️ What-if scenarios** — force a wet race, change track temperature/wind, or hand a
+- **Pick a race** — any round from four seasons of real data
+- **Predicted podium** — top-3 drivers with podium probability, checked against the *actual* result
+- **Full-grid probabilities** — all 20 drivers ranked, with podium-chance bars
+- **Constructor standings** — predicted points per team for that race
+- **What-if scenarios** — force a wet race, change track temperature/wind, or hand a
   driver a **grid penalty**, and see the podium re-shuffle live
-- **📡 Live weather** — pull *current* real-world conditions at the circuit
+- **Live weather** — pull *current* real-world conditions at the circuit
   (OpenWeatherMap) with one click, then predict on them
-- **🔍 Explainability** — a SHAP plot shows exactly what the model learned
+- **Explainability** — a SHAP plot shows exactly what the model learned
 
 ---
 
-## 🧠 How it works
+## How it works
 
 ```
                     FastF1 (real F1 data, 2021–2024)
@@ -63,7 +63,7 @@ conditions and watch the prediction react:
 
 ---
 
-## 📈 Model performance (evaluated honestly)
+## Model performance (evaluated honestly)
 
 Evaluation is **expanding-window**: each season is predicted using *only earlier
 seasons*, so no future data ever leaks in. Pooled over 68 out-of-sample races.
@@ -73,7 +73,7 @@ evaluation, so it does not affect these metrics.)
 
 | Metric | Model | Grid-only baseline |
 |---|---|---|
-| **ROC-AUC** (full-field ranking) | **0.918** ✅ | 0.902 |
+| **ROC-AUC** (full-field ranking) | **0.918** | 0.902 |
 | **PR-AUC** | 0.614 | — |
 | **Precision@3** (exact top-3) | 0.60 | 0.61 |
 
@@ -89,7 +89,7 @@ exactly what a race engineer would tell you, learned purely from data.
 
 ---
 
-## 🛠️ Tech stack
+## Tech stack
 
 - **Data:** FastF1 (real telemetry, results, qualifying, weather)
 - **ML:** scikit-learn pipeline + XGBoost, SHAP for explainability
@@ -102,7 +102,7 @@ exactly what a race engineer would tell you, learned purely from data.
 
 ---
 
-## 🚀 Run it locally
+## Run it locally
 
 ```bash
 # 1. create a venv and install runtime deps
@@ -123,9 +123,9 @@ The **"Use live conditions"** button needs a free
 [OpenWeatherMap](https://openweathermap.org/api) API key. Without one, everything
 else still works and the button shows a friendly hint.
 
-1. Create a free account at [openweathermap.org](https://openweathermap.org/api)
-   and copy your key from the **API keys** tab. (A new key can take a little while
-   to activate.)
+1. Create a free account at [openweathermap.org](https://openweathermap.org/api),
+   **confirm your account via the verification email**, and copy your key from the
+   **API keys** tab. (A new key can take up to ~2 hours to activate.)
 2. Put it in a `.env` file next to `main.py` — it's loaded automatically and is
    git-ignored:
 
@@ -169,7 +169,7 @@ python src/train.py                      # trains, evaluates, writes models/
 
 ---
 
-## ☁️ Deploy to Render
+## Deploy to Render
 
 The repo ships committed `models/` and `data/dataset.csv`, so the deployed app never
 has to hit the F1 API or retrain.
@@ -177,11 +177,12 @@ has to hit the F1 API or retrain.
 1. Push this repo to GitHub.
 2. On [Render](https://render.com): **New → Blueprint**, pick the repo. `render.yaml`
    configures everything (build, start command, Python version).
-3. Done — Render serves the FastAPI app on your URL.
+3. Add `OPENWEATHER_API_KEY` as an environment variable in the Render dashboard to
+   enable live weather (optional — it falls back gracefully without it).
 
 ---
 
-## 📁 Project structure
+## Project structure
 
 ```
 f1 race prediction/
@@ -208,11 +209,11 @@ f1 race prediction/
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [FastF1](https://docs.fastf1.dev/) — the F1 data that makes this possible
 - Formula 1 timing data is © FOM; used here for a non-commercial educational project
 
-## 📄 License
+## License
 
 MIT
