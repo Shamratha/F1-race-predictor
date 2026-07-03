@@ -5,6 +5,12 @@ decide a race — starting grid, qualifying pace, recent form, car reliability a
 the weather. Built on **real** [FastF1](https://docs.fastf1.dev/) data (2021–2024),
 served through a **FastAPI** backend and a custom dark-themed dashboard.
 
+### Live demo: **[f1-race-predictor-tl5m.onrender.com](https://f1-race-predictor-tl5m.onrender.com)**
+
+*Hosted on Render's free tier — the first visit after it's been idle may take
+~30–60s to wake up, then it's fast.*
+
+[![Live Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://f1-race-predictor-tl5m.onrender.com)
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/API-FastAPI-009485)
 ![XGBoost](https://img.shields.io/badge/Model-XGBoost-EB5E28)
