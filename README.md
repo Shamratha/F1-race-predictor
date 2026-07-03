@@ -66,7 +66,10 @@ conditions and watch the prediction react:
 ## 📈 Model performance (evaluated honestly)
 
 Evaluation is **expanding-window**: each season is predicted using *only earlier
-seasons*, so no future data ever leaks in. Pooled over 68 out-of-sample races:
+seasons*, so no future data ever leaks in. Pooled over 68 out-of-sample races.
+(These numbers are computed entirely on **historical** FastF1 data. Live weather is
+only a runtime what-if input in the dashboard — it never enters training or
+evaluation, so it does not affect these metrics.)
 
 | Metric | Model | Grid-only baseline |
 |---|---|---|
